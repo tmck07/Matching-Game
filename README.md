@@ -37,3 +37,7 @@ A fun and interactive browser-based game where players test their memory and att
 
 smiley-matching-game/ │ ├── index.html       # Main game file ├── README.md        # This readme file
 
+🧑‍💻 Author
+
+T McKnight
+Built as a web project to explore DOM manipulation, animations, and user interaction.
