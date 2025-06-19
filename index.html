@@ -1,66 +1,131 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Smiley Matching Game</title>
-    <style type="text/css">
-      div {
-        position: absolute;
-        width: 500px;
-        height: 500px;
-      }
-      img {
-        position: absolute;
-      }
-      #rightSide {
-        left: 500px;
-        border-left: 1px solid black;
-      }
-    </style>
-  </head>
+<head>
+  <title>Smiley Matching Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
 
-  <body id="theBody" onload="addSmiley()">
-    <h1>Matching Game</h1>
-    <p>Click on the extra smiling face on the left</p>
+    h1 {
+      margin-top: 20px;
+    }
+
+    #scoreBoard {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .game-board {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+      gap: 20px;
+    }
+
+    #leftSide, #rightSide {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      border: 1px solid #ddd;
+    }
+
+    #rightSide {
+      border-left: 1px solid black;
+    }
+
+    img {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    img:hover {
+      transform: scale(1.3) rotate(10deg);
+    }
+
+    #gameOverMessage {
+      font-size: 1.5em;
+      color: red;
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Smiley Matching Game</h1>
+  <div id="scoreBoard">Score: 0</div>
+  <p>Click on the extra smiling face on the left</p>
+
+  <div class="game-board">
     <div id="leftSide"></div>
     <div id="rightSide"></div>
-    <script>
-      var numberOfFaces = 5;
-      var theLeftSide = document.getElementById("leftSide");
-      var theBody = document.getElementsByTagName("body")[0];
+  </div>
 
-      function addSmiley() {
-        for (i = 0; i < numberOfFaces; i++) {
-          var randomTop = Math.floor(Math.random() * 400);
-          console.log(randomTop);
-          var randomLeft = Math.floor(Math.random() * 400);
-          var thisSmiley = document.createElement("img");
-          thisSmiley.src =
-            "https://learn.nucamp.co/pluginfile.php/783/mod_page/content/9/smile.png";
-          thisSmiley.style.top = randomTop + "px";
-          thisSmiley.style.left = randomLeft + "px";
-          theLeftSide.appendChild(thisSmiley);
-        }
-        var leftSideImages = theLeftSide.cloneNode(true);
-        leftSideImages.removeChild(leftSideImages.lastChild);
-        theRightSide = document.getElementById("rightSide");
-        theRightSide.appendChild(leftSideImages);
+  <div id="gameOverMessage">Game Over! Refresh to play again.</div>
 
-        theLeftSide.lastChild.onclick = function nextLevel(event) {
-          event.stopPropagation();
-          numberOfFaces += 5;
-          while (theLeftSide.firstChild)
-            theLeftSide.removeChild(theLeftSide.firstChild);
-          while (theRightSide.firstChild)
-            theRightSide.removeChild(theRightSide.firstChild);
-          addSmiley();
-        };
+  <script>
+    let numberOfFaces = 5;
+    let score = 0;
 
-        theBody.onclick = function gameOver() {
-          alert("Game Over!");
-          theBody.onclick = null;
-          theLeftSide.lastChild.onclick = null;
-        };
+    function updateScore() {
+      document.getElementById("scoreBoard").textContent = "Score: " + score;
+    }
+
+    function addSmiley() {
+      const theLeftSide = document.getElementById("leftSide");
+      const theRightSide = document.getElementById("rightSide");
+      const theBody = document.body;
+
+      for (let i = 0; i < numberOfFaces; i++) {
+        const randomTop = Math.floor(Math.random() * 400);
+        const randomLeft = Math.floor(Math.random() * 400);
+
+        const smiley = document.createElement("img");
+        smiley.src = "https://learn.nucamp.co/pluginfile.php/783/mod_page/content/9/smile.png";
+        smiley.style.top = `${randomTop}px`;
+        smiley.style.left = `${randomLeft}px`;
+        smiley.alt = "smiley face";
+
+        theLeftSide.appendChild(smiley);
       }
-    </script>
-  </body>
+
+      const leftSideImages = theLeftSide.cloneNode(true);
+      leftSideImages.removeChild(leftSideImages.lastChild);
+      theRightSide.appendChild(leftSideImages);
+
+      const lastSmiley = theLeftSide.lastChild;
+
+      lastSmiley.onclick = function nextLevel(event) {
+        event.stopPropagation();
+        score++;
+        updateScore();
+        numberOfFaces += 5;
+
+        resetGame();
+        addSmiley();
+      };
+
+      theBody.onclick = function gameOver() {
+        document.getElementById("gameOverMessage").style.display = "block";
+        theBody.onclick = null;
+        lastSmiley.onclick = null;
+      };
+    }
+
+    function resetGame() {
+      document.getElementById("leftSide").innerHTML = "";
+      document.getElementById("rightSide").innerHTML = "";
+    }
+
+    window.onload = function () {
+      updateScore();
+      addSmiley();
+    };
+  </script>
+</body>
 </html>
